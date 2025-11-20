@@ -1,0 +1,32 @@
+{
+  "name": "blog-list",
+  "version": "1.0.0",
+  "description": "",
+  "homepage": "https://github.com/Kitsune7X/blog-list#readme",
+  "bugs": {
+    "url": "https://github.com/Kitsune7X/blog-list/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Kitsune7X/blog-list.git"
+  },
+  "license": "MIT",
+  "author": "Kitsune",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node --watch index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "express": "^5.1.0",
+    "mongoose": "^8.20.1"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.1",
+    "@stylistic/eslint-plugin": "^5.6.1",
+    "eslint": "^9.39.1",
+    "globals": "^16.5.0"
+  }
+}
