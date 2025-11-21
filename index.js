@@ -2,6 +2,8 @@ import 'dotenv/config.js';
 import express from 'express';
 import mongoose from 'mongoose';
 import Blog from './models/blog.js';
+import morgan from 'morgan';
+import config from './utils/config.js';
 
 const app = express();
 
@@ -9,10 +11,10 @@ app.get('/', (req, res) => {
   res.send('<h1>こんにちは！</h1>');
 });
 
-const mongoUrl = process.env.MONGODB_URI;
+// const mongoUrl = process.env.MONGODB_URI;
 
 mongoose
-  .connect(mongoUrl, { family: 4 })
+  .connect(config.MONGODB_URI, { family: 4 })
   .then(() => console.log('Connected to MongoDB'))
   .catch((err) => console.log('Error connecting to MongoDB', err.message));
 
@@ -27,6 +29,12 @@ const reqLogger = (req, res, next) => {
 };
 
 app.use(reqLogger);
+
+// ---------- Morgan ----------
+morgan.token('body', (req) => JSON.stringify(req.body));
+app.use(
+  morgan(':method :url :status :response-time ms - :res[content-length] :body')
+);
 
 app.get('/api/blogs', (req, res) => {
   Blog.find({}).then((blogs) => {
@@ -55,3 +63,5 @@ app.listen(PORT, () => {
 });
 
 // Build the database first or make simple test?
+// Structure the app
+// Start with config first
