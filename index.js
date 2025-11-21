@@ -4,14 +4,13 @@ import mongoose from 'mongoose';
 import Blog from './models/blog.js';
 import morgan from 'morgan';
 import config from './utils/config.js';
+import middleware from './utils/middleware.js';
 
 const app = express();
 
 app.get('/', (req, res) => {
   res.send('<h1>こんにちは！</h1>');
 });
-
-// const mongoUrl = process.env.MONGODB_URI;
 
 mongoose
   .connect(config.MONGODB_URI, { family: 4 })
@@ -20,15 +19,7 @@ mongoose
 
 app.use(express.json());
 
-const reqLogger = (req, res, next) => {
-  console.log('Method ', req.method);
-  console.log('Path ', req.path);
-  console.log('Body ', req.body);
-  console.log('----------------');
-  next();
-};
-
-app.use(reqLogger);
+app.use(middleware.reqLogger);
 
 // ---------- Morgan ----------
 morgan.token('body', (req) => JSON.stringify(req.body));
