@@ -10,13 +10,14 @@ export default defineConfig([
     extends: ['js/recommended'],
     languageOptions: { globals: globals.node },
   },
-  { files: ['**/*.js'], languageOptions: { sourceType: 'commonjs' } },
+  { files: ['**/*.js'], languageOptions: { sourceType: 'module' } },
   {
     rules: {
       eqeqeq: 'error',
       'no-console': 'off',
       '@stylistic/indent': ['error', 2],
       '@stylistic/quotes': ['error', 'single'],
+      '@stylistic/linebreak-style': ['error', 'unix'],
     },
   },
 ]);
