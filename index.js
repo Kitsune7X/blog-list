@@ -5,21 +5,16 @@ import Blog from './models/blog.js';
 import morgan from 'morgan';
 import config from './utils/config.js';
 import middleware from './utils/middleware.js';
-
-const app = express();
-
-app.get('/', (req, res) => {
-  res.send('<h1>こんにちは！</h1>');
-});
+import app from './app.js';
 
 mongoose
   .connect(config.MONGODB_URI, { family: 4 })
   .then(() => console.log('Connected to MongoDB'))
   .catch((err) => console.log('Error connecting to MongoDB', err.message));
 
-app.use(express.json());
+// app.use(express.json());
 
-app.use(middleware.reqLogger);
+// app.use(middleware.reqLogger);
 
 // ---------- Morgan ----------
 morgan.token('body', (req) => JSON.stringify(req.body));
