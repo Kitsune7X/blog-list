@@ -16,7 +16,7 @@ export default defineConfig([
       eqeqeq: 'error',
       'no-console': 'off',
       '@stylistic/indent': ['error', 2],
-      '@stylistic/quotes': ['error', 'single'],
+      '@stylistic/quotes': ['error', 'single', { avoidEscape: true }],
       '@stylistic/linebreak-style': ['error', 'unix'],
     },
   },
