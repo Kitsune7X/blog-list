@@ -6,6 +6,7 @@ import logger from '../utils/logger.js';
 // for this reason, it is often referred to as a “mini-app”.
 // https://expressjs.com/en/guide/routing.html
 const router = express.Router();
+import Blog from '../models/blog.js';
 
 // ---------- Timelog middleware that is specific to this router ----------
 const timeLog = (req, res, next) => {
@@ -17,5 +18,26 @@ router.use(timeLog);
 
 // ---------- Welcome page ----------
 router.get('/', (req, res) => res.send('<h1>WELCOME!</h1>'));
+
+// ---------- Get all blogs ----------
+router.get('/api/blogs', (req, res) => {
+  Blog.find({}).then((blogs) => res.json(blogs));
+});
+
+// ---------- Add new blog ----------
+router.post('/api/blogs', (req, res, next) => {
+  const body = req.body;
+  const blog = new Blog({
+    title: body.title,
+    author: body.author,
+    url: body.url,
+    likes: body.likes || 0,
+  });
+
+  blog
+    .save()
+    .then((savedBlog) => res.status(201).json(savedBlog))
+    .catch((err) => next(err));
+});
 
 export default router;

@@ -1,0 +1,17 @@
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+
+{
+  "title": "FOX--Blog",
+  "url": "www.fox-kun.com"
+}
+
+###
+
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+
+{
+  "title": "FOX-SSS",
+  "author": "FOX-kun",
+}
