@@ -33,6 +33,9 @@ app.use(middleware.reqLogger);
 // ---------- Pass request to '/' to router 'mini-app' ----------
 app.use('/', blogRouter);
 
+// ---------- Handle invalid address ----------
+app.use(middleware.unknownEndpoint);
+
 // ---------- Handle error ----------
 app.use(middleware.errHandler);
 

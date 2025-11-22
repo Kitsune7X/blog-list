@@ -10,6 +10,9 @@ const reqLogger = (req, res, next) => {
   next();
 };
 
+const unknownEndpoint = (req, res) =>
+  res.status(404).send('<h2>Unknown Endpoint!</h2>');
+
 // ---------- Error handling ----------
 const errHandler = (err, req, res, next) => {
   logger.error(err.message);
@@ -21,4 +24,4 @@ const errHandler = (err, req, res, next) => {
   next(err);
 };
 
-export default { reqLogger, errHandler };
+export default { reqLogger, unknownEndpoint, errHandler };
