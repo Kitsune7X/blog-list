@@ -49,4 +49,26 @@ const mostBlogs = (blogs) => {
   );
 };
 
-export default { dummy, totalLikes, favoriteBlog, mostBlogs };
+// ---------- Find the author with most likes function ----------
+const mostLikes = (blogs) => {
+  if (blogs.length === 0) return 'There is no spoon';
+
+  // It's mostly the same as finding the
+  const likesPerAuthor = blogs.reduce((acc, curr) => {
+    acc[curr.author] = acc[curr.author] + curr.likes || curr.likes;
+    return acc;
+  }, {});
+
+  return Object.entries(likesPerAuthor).reduce(
+    ({ author, likes = -Infinity }, [currAuthor, currLikes]) => {
+      if (currLikes > likes) {
+        likes = currLikes;
+        author = currAuthor;
+      }
+      return { author, likes };
+    },
+    {}
+  );
+};
+
+export default { dummy, totalLikes, favoriteBlog, mostBlogs, mostLikes };
