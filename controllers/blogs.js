@@ -40,4 +40,19 @@ router.post('/api/blogs', async (req, res) => {
   res.status(201).json(savedBlog);
 });
 
+// ---------- View single blog ----------
+router.get('/api/blogs/:id', async (req, res) => {
+  const id = req.params.id;
+
+  const blog = await Blog.findById(id);
+  // logger.info(blog);
+
+  res.status(200).json(blog);
+});
+
+// ---------- Delete a single blog ----------
+// router.delete('/api/blogs/:id', async (req, res) => {
+//   const id = req
+// })
+
 export default router;

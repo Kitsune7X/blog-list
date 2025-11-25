@@ -60,14 +60,12 @@ test('Unique identifier property of blog post is named id', async () => {
 
   // Get all the blog
   const blogs = await api.get('/api/blogs');
-  // console.log(blogs.body);
 
   // Object.keys() return a array of keys. We check if each of those
   // array contain 'id'.
   const blogIdCheck = blogs.body.every((blog) =>
     Object.keys(blog).includes('id')
   );
-  // console.log(blogIdCheck);
 
   assert.strictEqual(blogIdCheck, true);
 });
@@ -83,7 +81,6 @@ test('Post a new blog works', async () => {
     url: 'https://wwe.com/articles/orton-apex',
     likes: 9,
   };
-  // console.log(newBlog);
 
   await api
     .post('/api/blogs')
@@ -120,6 +117,9 @@ test('Blog with empty body will not be added', async () => {
 // ---------- Test for missing `likes` property ----------
 // If the `likes` property is missing from `req`, default to 0
 test('When "Likes" is missing, default to 0', async () => {
+  console.log('-- 7th test begin --');
+  console.log('----------------------------------');
+
   const blogWithoutLikes = {
     title: "The Game's Evolution",
     author: 'Triple H',
@@ -140,6 +140,9 @@ test('When "Likes" is missing, default to 0', async () => {
 
 // ---------- Test for missing `Title` ----------
 test('Blog without "Title" will not be added', async () => {
+  console.log('-- 8th test begin --');
+  console.log('----------------------------------');
+
   const blogWithoutTitle = {
     author: 'The Undertaker',
     url: 'https://wwe.com/articles/undertaker-aura',
@@ -156,6 +159,9 @@ test('Blog without "Title" will not be added', async () => {
 
 // ---------- Test for missing Author ----------
 test('Blog without "Author" will not be added', async () => {
+  console.log('-- 9th test begin --');
+  console.log('----------------------------------');
+
   const blogWithoutAuthor = {
     title: "The Deadman's Aura",
     url: 'https://wwe.com/articles/undertaker-aura',
@@ -171,6 +177,9 @@ test('Blog without "Author" will not be added', async () => {
 
 // ---------- Test for missing Url ----------
 test('Blog without "Url" will not be added', async () => {
+  console.log('-- 10th test begin --');
+  console.log('----------------------------------');
+
   const blogWithoutUrl = {
     title: "The Deadman's Aura",
     author: 'The Undertaker',
