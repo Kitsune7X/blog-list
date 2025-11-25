@@ -24,8 +24,10 @@ const nonExistingId = async () => {
   });
 
   await tempBlog.save();
+
   await tempBlog.deleteOne();
-  return tempBlog._id.toJSON();
+
+  return tempBlog._id.toString();
 };
 
 const blogsInDb = async () => {

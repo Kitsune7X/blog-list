@@ -46,8 +46,9 @@ router.get('/api/blogs/:id', async (req, res) => {
 
   const blog = await Blog.findById(id);
   // logger.info(blog);
-
-  res.status(200).json(blog);
+  if (!blog) {
+    res.status(404).json({ error: 'Non exist blog' });
+  } else res.status(200).json(blog);
 });
 
 // ---------- Delete a single blog ----------

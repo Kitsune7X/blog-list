@@ -88,16 +88,18 @@ describe('When there are initially some blogs saved', () => {
     test.only('fail with status 404 when blog does not exist', async () => {
       const nonExistingId = await blogHelper.nonExistingId();
 
-      api.get(`/api/blogs/${nonExistingId}`).expect(404);
+      await api.get(`/api/blogs/${nonExistingId}`).expect(404);
     });
 
     // ---------- Test for invalid id ----------
     test.only('fail with status 400 when id is invalid', async () => {
       const invalidId = '23434311';
 
-      api.get(`/api/blogs/${invalidId}`).expect(400);
+      await api.get(`/api/blogs/${invalidId}`).expect(400);
     });
   });
+
+  // describe('Post a new blog', () => )
 });
 
 // ---------- Test Posting function ----------
