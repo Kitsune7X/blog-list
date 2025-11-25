@@ -95,6 +95,39 @@ test('Post a new blog works', async () => {
 
   // Check if the length of the new array === initialBlogs + 1
   assert.strictEqual(blogsAtEnd.length, blogHelper.initialBlogs.length + 1);
+
+  // Check if the posted Blog is the same as `newBlog`
+  const titles = blogsAtEnd.map((blog) => blog.title);
+
+  assert.strictEqual(titles.includes(newBlog.title), true);
+});
+
+// ---------- Test for invalid blog post ----------
+test('Invalid blog will not be added', async () => {
+  console.log('-- 6th test begin --');
+  console.log('----------------------------------');
+
+  const blogWithoutBody = {};
+  const blogWithoutTitle = {
+    author: 'The Undertaker',
+    url: 'https://wwe.com/articles/undertaker-aura',
+    likes: 31,
+  };
+  const blogWithoutAuthor = {
+    title: "The Deadman's Aura",
+    url: 'https://wwe.com/articles/undertaker-aura',
+    likes: 31,
+  };
+  const blogWithoutUrl = {
+    title: "The Deadman's Aura",
+    author: 'The Undertaker',
+    likes: 31,
+  };
+
+  await api.post('/api/blogs').send(blogWithoutBody).expect(400);
+  await api.post('/api/blogs').send(blogWithoutTitle).expect(400);
+  await api.post('/api/blogs').send(blogWithoutAuthor).expect(400);
+  await api.post('/api/blogs').send(blogWithoutUrl).expect(400);
 });
 
 // ---------- Close the connection ----------
