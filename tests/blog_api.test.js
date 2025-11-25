@@ -1,4 +1,5 @@
 import { test, after, beforeEach } from 'node:test';
+import assert from 'node:assert/strict';
 import mongoose from 'mongoose';
 import supertest from 'supertest';
 import app from '../app.js';
@@ -32,19 +33,20 @@ beforeEach(async () => {
   await Blog.deleteMany({});
 
   let blogObject = new Blog(blogs[0]);
-  console.log(blogObject);
+  // console.log(blogObject);
   await blogObject.save();
   console.log('Added 1st blog');
 
   blogObject = new Blog(blogs[1]);
-  console.log(blogObject);
+  // console.log(blogObject);
   await blogObject.save();
   console.log('Added 2nd blog');
 });
 
 // ---------- Test correct Content type ----------
 test('blogs are returned as json', async () => {
-  console.log('Test begin');
+  console.log('-- 1st test begin --');
+  console.log('----------------------------------');
 
   await api
     .get('/api/blogs')
@@ -53,6 +55,29 @@ test('blogs are returned as json', async () => {
 });
 
 // ---------- Test all blogs are returned ----------
+test('all blogs are returned', async () => {
+  console.log('-- 2nd test begin --');
+  console.log('----------------------------------');
+
+  const blogs = await Blog.find({});
+  // console.log(blogs);
+
+  assert.strictEqual(blogs.length, 2);
+});
+
+// ---------- Test for specific blog ----------
+test('a specific blog is within returned blogs', async () => {
+  console.log('-- 3rd test begin --');
+  console.log('----------------------------------');
+
+  const blogs = await Blog.find({});
+
+  console.log(blogs);
+  const blogTitles = blogs.map((z) => z.title);
+  console.log(blogTitles);
+
+  assert.strictEqual(blogTitles[0], "Never Give Up: Cena's Mentality");
+});
 
 // ---------- Close the connection ----------
 // Note: Need to close the connection after test otherwise it would hang
