@@ -8,9 +8,9 @@ import logger from '../utils/logger.js';
 const router = express.Router();
 import Blog from '../models/blog.js';
 
-// ---------- Timelog middleware that is specific to this router ----------
+// ---------- Time log middleware that is specific to this router ----------
 const timeLog = (req, res, next) => {
-  logger.info('Time: ', Date.now());
+  logger.info('Time: ', new Date().toString());
   next();
 };
 
