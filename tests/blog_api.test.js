@@ -1,4 +1,4 @@
-import { test, after, beforeEach } from 'node:test';
+import { test, after, beforeEach, describe } from 'node:test';
 import assert from 'node:assert/strict';
 import mongoose from 'mongoose';
 import supertest from 'supertest';
@@ -9,65 +9,89 @@ import Blog from '../models/blog.js';
 // Wrap the Express app in `supertest` function
 const api = supertest(app);
 
-// ---------- Initialize Test Database ----------
-beforeEach(async () => {
-  await Blog.deleteMany({});
+describe('When there are initially some blogs saved', () => {
+  // ---------- Initialize Test Database ----------
+  beforeEach(async () => {
+    await Blog.deleteMany({});
 
-  await Blog.insertMany(blogHelper.initialBlogs);
-  console.log('Initialize Data complete');
-});
+    await Blog.insertMany(blogHelper.initialBlogs);
+    // console.log('Initialize Data complete');
+  });
 
-// ---------- Test correct Content type ----------
-test('Blogs are returned as json', async () => {
-  console.log('-- 1st test begin --');
-  console.log('----------------------------------');
+  // ---------- Test correct Content type ----------
+  test('Blogs are returned as json', async () => {
+    console.log('-- 1st test begin --');
+    console.log('----------------------------------');
 
-  await api
-    .get('/api/blogs')
-    .expect(200)
-    .expect('Content-Type', /application\/json/);
-});
+    await api
+      .get('/api/blogs')
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+  });
 
-// ---------- Test all blogs are returned ----------
-test('All blogs are returned', async () => {
-  console.log('-- 2nd test begin --');
-  console.log('----------------------------------');
+  // ---------- Test all blogs are returned ----------
+  test('All blogs are returned', async () => {
+    console.log('-- 2nd test begin --');
+    console.log('----------------------------------');
 
-  const blogs = await api.get('/api/blogs');
-  // console.log(blogs.body);
+    const blogs = await api.get('/api/blogs');
+    // console.log(blogs.body);
 
-  assert.strictEqual(blogs.body.length, blogHelper.initialBlogs.length);
-});
+    assert.strictEqual(blogs.body.length, blogHelper.initialBlogs.length);
+  });
 
-// ---------- Test for specific blog ----------
-test('A specific blog is within returned blogs', async () => {
-  console.log('-- 3rd test begin --');
-  console.log('----------------------------------');
+  // ---------- Test for specific blog ----------
+  test('A specific blog is within returned blogs', async () => {
+    console.log('-- 3rd test begin --');
+    console.log('----------------------------------');
 
-  const blogs = await api.get('/api/blogs');
+    const blogs = await api.get('/api/blogs');
 
-  // console.log(blogs.body);
-  const blogTitles = blogs.body.map((z) => z.title);
-  // console.log(blogTitles);
+    const blogTitles = blogs.body.map((z) => z.title);
 
-  assert.strictEqual(blogTitles[0], "Never Give Up: Cena's Mentality");
-});
+    assert.strictEqual(blogTitles[0], "Never Give Up: Cena's Mentality");
+  });
 
-// ---------- Test to verify that unique identifier is named `id`  ----------
-test('Unique identifier property of blog post is named id', async () => {
-  console.log('-- 4rd test begin --');
-  console.log('----------------------------------');
+  // ---------- Test to verify that unique identifier is named `id`  ----------
+  test('Unique identifier property of blog post is named id', async () => {
+    console.log('-- 4rd test begin --');
+    console.log('----------------------------------');
 
-  // Get all the blog
-  const blogs = await api.get('/api/blogs');
+    // Get all the blog
+    const blogs = await api.get('/api/blogs');
 
-  // Object.keys() return a array of keys. We check if each of those
-  // array contain 'id'.
-  const blogIdCheck = blogs.body.every((blog) =>
-    Object.keys(blog).includes('id')
-  );
+    // Object.keys() return a array of keys. We check if each of those
+    // array contain 'id'.
+    const blogIdCheck = blogs.body.every((blog) =>
+      Object.keys(blog).includes('id')
+    );
 
-  assert.strictEqual(blogIdCheck, true);
+    assert.strictEqual(blogIdCheck, true);
+  });
+
+  describe('Viewing a specific blog', () => {
+    // ---------- Test succeed case ----------
+    test('succeeds with a valid id', async () => {
+      const blogsAtStart = await blogHelper.blogsInDb();
+
+      const blogToView = blogsAtStart[0];
+
+      const resultBlog = await api
+        .get(`/api/blogs/${blogToView.id}`)
+        .expect(200)
+        .expect('Content-Type', /application\/json/);
+
+      assert.deepStrictEqual(resultBlog.body, blogToView);
+    });
+
+    // ---------- Test valid id but deleted ----------
+    test.only('return status 404 when blog does not exist', async () => {
+      const nonExistingId = await blogHelper.nonExistingId();
+
+      console.log(nonExistingId);
+      api.get(`/api/blogs/${nonExistingId}`).expect(404);
+    });
+  });
 });
 
 // ---------- Test Posting function ----------

@@ -16,6 +16,18 @@ const initialBlogs = [
   },
 ];
 
+const nonExistingId = async () => {
+  const tempBlog = new Blog({
+    title: 'Temp',
+    author: 'Temp',
+    url: 'Temp',
+  });
+
+  await tempBlog.save();
+  await tempBlog.deleteOne();
+  return tempBlog._id.toJSON();
+};
+
 const blogsInDb = async () => {
   const blogs = await Blog.find({});
 
@@ -23,4 +35,4 @@ const blogsInDb = async () => {
   return blogs.map((blog) => blog.toJSON());
 };
 
-export default { initialBlogs, blogsInDb };
+export default { initialBlogs, nonExistingId, blogsInDb };
