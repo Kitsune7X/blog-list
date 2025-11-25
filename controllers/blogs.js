@@ -56,7 +56,8 @@ router.delete('/api/blogs/:id', async (req, res) => {
   const id = req.params.id;
 
   const deletedBlog = await Blog.findByIdAndDelete(id);
-  console.log(deletedBlog);
+
+  if (!deletedBlog) return res.status(400).end();
   res.status(204).end();
 });
 

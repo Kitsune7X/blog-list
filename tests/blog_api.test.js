@@ -202,6 +202,20 @@ describe('When there are initially some blogs saved', () => {
 
       await api.delete(`/api/blogs/${blogToDelete.id}`).expect(204);
     });
+
+    // ---------- Test for non existent Blog ----------
+    test.only('Fail with status 400 when id is valid but blog does not exist', async () => {
+      const nonExistingId = await blogHelper.nonExistingId();
+
+      await api.delete(`/api/blogs/${nonExistingId}`).expect(400);
+    });
+
+    // ---------- Test for invalid id ----------
+    test.only('Fail with status 400 when id is invalid', async () => {
+      const invalidId = '2321313';
+
+      await api.delete(`/api/blogs/${invalidId}`).expect(400);
+    });
   });
 });
 
