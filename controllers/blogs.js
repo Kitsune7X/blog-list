@@ -20,8 +20,10 @@ router.use(timeLog);
 router.get('/', (req, res) => res.send('<h1>WELCOME!</h1>'));
 
 // ---------- Get all blogs ----------
-router.get('/api/blogs', (req, res) => {
-  Blog.find({}).then((blogs) => res.json(blogs));
+router.get('/api/blogs', async (req, res) => {
+  const blogs = await Blog.find({});
+
+  res.json(blogs);
 });
 
 // ---------- Add new blog ----------
