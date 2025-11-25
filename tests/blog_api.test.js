@@ -18,7 +18,7 @@ beforeEach(async () => {
 });
 
 // ---------- Test correct Content type ----------
-test('blogs are returned as json', async () => {
+test('Blogs are returned as json', async () => {
   console.log('-- 1st test begin --');
   console.log('----------------------------------');
 
@@ -29,28 +29,47 @@ test('blogs are returned as json', async () => {
 });
 
 // ---------- Test all blogs are returned ----------
-test('all blogs are returned', async () => {
+test('All blogs are returned', async () => {
   console.log('-- 2nd test begin --');
   console.log('----------------------------------');
 
-  const blogs = await Blog.find({});
-  // console.log(blogs);
+  const blogs = await api.get('/api/blogs');
+  // console.log(blogs.body);
 
-  assert.strictEqual(blogs.length, 2);
+  assert.strictEqual(blogs.body.length, blogHelper.initialBlogs.length);
 });
 
 // ---------- Test for specific blog ----------
-test('a specific blog is within returned blogs', async () => {
+test('A specific blog is within returned blogs', async () => {
   console.log('-- 3rd test begin --');
   console.log('----------------------------------');
 
-  const blogs = await Blog.find({});
+  const blogs = await api.get('/api/blogs');
 
-  console.log(blogs);
-  const blogTitles = blogs.map((z) => z.title);
-  console.log(blogTitles);
+  // console.log(blogs.body);
+  const blogTitles = blogs.body.map((z) => z.title);
+  // console.log(blogTitles);
 
   assert.strictEqual(blogTitles[0], "Never Give Up: Cena's Mentality");
+});
+
+// ---------- Test to verify that unique identifier is named `id`  ----------
+test('Unique identifier property of blog post is named id', async () => {
+  console.log('-- 4rd test begin --');
+  console.log('----------------------------------');
+
+  // Get all the blog
+  const blogs = await api.get('/api/blogs');
+  // console.log(blogs.body);
+
+  // Object.keys() return a array of keys. We check if each of those
+  // array contain 'id'.
+  const blogIdCheck = blogs.body.every((blog) =>
+    Object.keys(blog).includes('id')
+  );
+  // console.log(blogIdCheck);
+
+  assert.strictEqual(blogIdCheck, true);
 });
 
 // ---------- Close the connection ----------
