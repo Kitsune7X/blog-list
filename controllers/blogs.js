@@ -52,8 +52,12 @@ router.get('/api/blogs/:id', async (req, res) => {
 });
 
 // ---------- Delete a single blog ----------
-// router.delete('/api/blogs/:id', async (req, res) => {
-//   const id = req
-// })
+router.delete('/api/blogs/:id', async (req, res) => {
+  const id = req.params.id;
+
+  const deletedBlog = await Blog.findByIdAndDelete(id);
+  console.log(deletedBlog);
+  res.status(204).end();
+});
 
 export default router;

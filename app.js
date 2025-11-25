@@ -14,9 +14,13 @@ logger.info('Connecting to', config.MONGODB_URI);
 
 // ---------- Morgan ----------
 morgan.token('body', (req) => JSON.stringify(req.body));
-app.use(
-  morgan(':method :url :status :response-time ms - :res[content-length] :body')
-);
+if (process.env.NODE_ENV !== 'test') {
+  app.use(
+    morgan(
+      ':method :url :status :response-time ms - :res[content-length] :body'
+    )
+  );
+}
 
 // ---------- Connect to MongoDB ----------
 mongoose

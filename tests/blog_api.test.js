@@ -20,9 +20,6 @@ describe('When there are initially some blogs saved', () => {
 
   // ---------- Test correct Content type ----------
   test('Blogs are returned as json', async () => {
-    console.log('-- 1st test begin --');
-    console.log('----------------------------------');
-
     await api
       .get('/api/blogs')
       .expect(200)
@@ -31,9 +28,6 @@ describe('When there are initially some blogs saved', () => {
 
   // ---------- Test all blogs are returned ----------
   test('All blogs are returned', async () => {
-    console.log('-- 2nd test begin --');
-    console.log('----------------------------------');
-
     const blogs = await api.get('/api/blogs');
     // console.log(blogs.body);
 
@@ -42,9 +36,6 @@ describe('When there are initially some blogs saved', () => {
 
   // ---------- Test for specific blog ----------
   test('A specific blog is within returned blogs', async () => {
-    console.log('-- 3rd test begin --');
-    console.log('----------------------------------');
-
     const blogs = await api.get('/api/blogs');
 
     const blogTitles = blogs.body.map((z) => z.title);
@@ -54,9 +45,6 @@ describe('When there are initially some blogs saved', () => {
 
   // ---------- Test to verify that unique identifier is named `id`  ----------
   test('Unique identifier property of blog post is named id', async () => {
-    console.log('-- 4rd test begin --');
-    console.log('----------------------------------');
-
     // Get all the blog
     const blogs = await api.get('/api/blogs');
 
@@ -101,10 +89,7 @@ describe('When there are initially some blogs saved', () => {
 
   describe('Post a new blog', () => {
     // ---------- Test Posting function ----------
-    test.only('Post a new blog works', async () => {
-      console.log('-- 5th test begin --');
-      console.log('----------------------------------');
-
+    test('Post a new blog works', async () => {
       const newBlog = {
         title: 'Rise of the Apex Predator',
         author: 'Randy Orton',
@@ -130,10 +115,7 @@ describe('When there are initially some blogs saved', () => {
     });
 
     // ---------- Test for invalid blog post ----------
-    test.only('Blog with empty body will not be added', async () => {
-      console.log('-- 6th test begin --');
-      console.log('----------------------------------');
-
+    test('Blog with empty body will not be added', async () => {
       const blogWithoutBody = {};
 
       await api.post('/api/blogs').send(blogWithoutBody).expect(400);
@@ -146,10 +128,7 @@ describe('When there are initially some blogs saved', () => {
 
     // ---------- Test for missing `likes` property ----------
     // If the `likes` property is missing from `req`, default to 0
-    test.only('When "Likes" is missing, default to 0', async () => {
-      console.log('-- 7th test begin --');
-      console.log('----------------------------------');
-
+    test('When "Likes" is missing, default to 0', async () => {
       const blogWithoutLikes = {
         title: "The Game's Evolution",
         author: 'Triple H',
@@ -169,10 +148,7 @@ describe('When there are initially some blogs saved', () => {
     });
 
     // ---------- Test for missing `Title` ----------
-    test.only('Blog without "Title" will not be added', async () => {
-      console.log('-- 8th test begin --');
-      console.log('----------------------------------');
-
+    test('Blog without "Title" will not be added', async () => {
       const blogWithoutTitle = {
         author: 'The Undertaker',
         url: 'https://wwe.com/articles/undertaker-aura',
@@ -188,10 +164,7 @@ describe('When there are initially some blogs saved', () => {
     });
 
     // ---------- Test for missing Author ----------
-    test.only('Blog without "Author" will not be added', async () => {
-      console.log('-- 9th test begin --');
-      console.log('----------------------------------');
-
+    test('Blog without "Author" will not be added', async () => {
       const blogWithoutAuthor = {
         title: "The Deadman's Aura",
         url: 'https://wwe.com/articles/undertaker-aura',
@@ -206,10 +179,7 @@ describe('When there are initially some blogs saved', () => {
     });
 
     // ---------- Test for missing Url ----------
-    test.only('Blog without "Url" will not be added', async () => {
-      console.log('-- 10th test begin --');
-      console.log('----------------------------------');
-
+    test('Blog without "Url" will not be added', async () => {
       const blogWithoutUrl = {
         title: "The Deadman's Aura",
         author: 'The Undertaker',
@@ -221,6 +191,16 @@ describe('When there are initially some blogs saved', () => {
       const blogsAtEnd = await Blog.find({});
 
       assert.strictEqual(blogsAtEnd.length, blogHelper.initialBlogs.length);
+    });
+  });
+
+  describe('Delete a blog', () => {
+    // ---------- Test when id is valid ----------
+    test.only('When the id is valid, delete the blog', async () => {
+      const blogsAtStart = await Blog.find({});
+      const blogToDelete = blogsAtStart[0];
+
+      await api.delete(`/api/blogs/${blogToDelete.id}`).expect(204);
     });
   });
 });
