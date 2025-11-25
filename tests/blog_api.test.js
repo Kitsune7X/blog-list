@@ -130,6 +130,26 @@ test('Invalid blog will not be added', async () => {
   await api.post('/api/blogs').send(blogWithoutUrl).expect(400);
 });
 
+// ---------- Test for missing `likes` property ----------
+// If the `likes` property is missing from `req`, default to 0
+test('When Likes is missing, default to 0', async () => {
+  const blogWithoutLikes = {
+    title: "The Game's Evolution",
+    author: 'Triple H',
+    url: 'https://wwe.com/articles/triple-h-evolution',
+  };
+
+  // Test if the blog is successfully posted first
+  await api
+    .post('/api/blogs')
+    .send(blogWithoutLikes)
+    .expect(201)
+    .expect('Content-Type', /application\/json/);
+
+  // Check if the likes is 0
+  const addedBlog = (await Blog.find({})).at(-1);
+  assert.strictEqual(addedBlog.likes, 0);
+});
 // ---------- Close the connection ----------
 // Note: Need to close the connection after test otherwise it would hang
 after(async () => {
