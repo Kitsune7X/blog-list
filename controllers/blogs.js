@@ -27,7 +27,7 @@ router.get('/api/blogs', async (req, res) => {
 });
 
 // ---------- Add new blog ----------
-router.post('/api/blogs', (req, res, next) => {
+router.post('/api/blogs', async (req, res) => {
   const body = req.body;
   const blog = new Blog({
     title: body.title,
@@ -36,10 +36,8 @@ router.post('/api/blogs', (req, res, next) => {
     likes: body.likes || 0,
   });
 
-  blog
-    .save()
-    .then((savedBlog) => res.status(201).json(savedBlog))
-    .catch((err) => next(err));
+  const savedBlog = await blog.save();
+  res.status(201).json(savedBlog);
 });
 
 export default router;
