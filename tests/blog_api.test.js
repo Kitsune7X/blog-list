@@ -3,44 +3,18 @@ import assert from 'node:assert/strict';
 import mongoose from 'mongoose';
 import supertest from 'supertest';
 import app from '../app.js';
+import blogHelper from './test_helper.js';
 import Blog from '../models/blog.js';
 
 // Wrap the Express app in `supertest` function
 const api = supertest(app);
 
-// Dummy data
-const blogs = [
-  {
-    _id: '64b31ab71b54a676234d2002',
-    title: "Never Give Up: Cena's Mentality",
-    author: 'John Cena',
-    url: 'https://wwe.com/articles/cena-mentality',
-    likes: 15,
-    __v: 0,
-  },
-  {
-    _id: '64b31ac81b54a676234d2003',
-    title: 'Lucha Libre Heart',
-    author: 'Rey Mysterio',
-    url: 'https://wwe.com/articles/rey-heart',
-    likes: 11,
-    __v: 0,
-  },
-];
-
 // ---------- Initialize Test Database ----------
 beforeEach(async () => {
   await Blog.deleteMany({});
 
-  let blogObject = new Blog(blogs[0]);
-  // console.log(blogObject);
-  await blogObject.save();
-  console.log('Added 1st blog');
-
-  blogObject = new Blog(blogs[1]);
-  // console.log(blogObject);
-  await blogObject.save();
-  console.log('Added 2nd blog');
+  await Blog.insertMany(blogHelper.initialBlogs);
+  console.log('Initialize Data complete');
 });
 
 // ---------- Test correct Content type ----------
