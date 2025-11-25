@@ -21,6 +21,8 @@ const errHandler = (err, req, res, next) => {
     return res.status(400).json({ error: err.message });
   else if (err.name === 'TypeError')
     return res.status(400).json({ error: 'Content missing' });
+  else if (err.name === 'CastError')
+    return res.status(400).json({ error: err.message });
   next(err);
 };
 
