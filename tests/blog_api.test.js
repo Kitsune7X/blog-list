@@ -72,6 +72,31 @@ test('Unique identifier property of blog post is named id', async () => {
   assert.strictEqual(blogIdCheck, true);
 });
 
+// ---------- Test Posting function ----------
+test('Post a new blog works', async () => {
+  console.log('-- 5th test begin --');
+  console.log('----------------------------------');
+
+  const newBlog = {
+    title: 'Rise of the Apex Predator',
+    author: 'Randy Orton',
+    url: 'https://wwe.com/articles/orton-apex',
+    likes: 9,
+  };
+  // console.log(newBlog);
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/);
+
+  const blogsAtEnd = await blogHelper.blogsInDb();
+
+  // Check if the length of the new array === initialBlogs + 1
+  assert.strictEqual(blogsAtEnd.length, blogHelper.initialBlogs.length + 1);
+});
+
 // ---------- Close the connection ----------
 // Note: Need to close the connection after test otherwise it would hang
 after(async () => {
