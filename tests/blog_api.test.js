@@ -196,7 +196,7 @@ describe('When there are initially some blogs saved', () => {
 
   describe('Delete a blog', () => {
     // ---------- Test when id is valid ----------
-    test.only('When the id is valid, delete the blog', async () => {
+    test('When the id is valid, delete the blog', async () => {
       const blogsAtStart = await Blog.find({});
       const blogToDelete = blogsAtStart[0];
 
@@ -204,17 +204,51 @@ describe('When there are initially some blogs saved', () => {
     });
 
     // ---------- Test for non existent Blog ----------
-    test.only('Fail with status 400 when id is valid but blog does not exist', async () => {
+    test('Fail with status 400 when id is valid but blog does not exist', async () => {
       const nonExistingId = await blogHelper.nonExistingId();
 
       await api.delete(`/api/blogs/${nonExistingId}`).expect(400);
     });
 
     // ---------- Test for invalid id ----------
-    test.only('Fail with status 400 when id is invalid', async () => {
+    test('Fail with status 400 when id is invalid', async () => {
       const invalidId = '2321313';
 
       await api.delete(`/api/blogs/${invalidId}`).expect(400);
+    });
+  });
+
+  describe('Update a blog', () => {
+    // ---------- Test for update when id is valid ----------
+    test('When the id and content is valid, update the blog', async () => {
+      const blogsAtStart = await blogHelper.blogsInDb();
+      const blogToUpdate = blogsAtStart[0];
+      const updateLikes = { likes: 100 };
+
+      const updatedBlog = await api
+        .put(`/api/blogs/${blogToUpdate.id}`)
+        .send(updateLikes)
+        .expect(200)
+        .expect('Content-Type', /application\/json/);
+
+      // Test that the updated Blog has the correct amount of likes
+      assert.strictEqual(updatedBlog.body.likes, updateLikes.likes);
+    });
+
+    // ---------- Test for when id is valid but content is non existent ----------
+    test('Fail with status 400 when id is valid but content is non existent', async () => {
+      const nonExistingId = blogHelper.nonExistingId();
+      const tempLikes = { likes: 100 };
+
+      await api.put(`/api/blogs/${nonExistingId}`).send(tempLikes).expect(400);
+    });
+
+    // ---------- Test for when id is invalid ----------
+    test('Fail with status 400 when id is invalid', async () => {
+      const invalidId = '23254523';
+      const tempLikes = { likes: 100 };
+
+      await api.put(`/api/blogs/${invalidId}`).send(tempLikes).expect(400);
     });
   });
 });

@@ -61,4 +61,18 @@ router.delete('/api/blogs/:id', async (req, res) => {
   res.status(204).end();
 });
 
+// ---------- Update a single blog ----------
+router.put('/api/blogs/:id', async (req, res) => {
+  const id = req.params.id;
+
+  const updatedBlog = await Blog.findByIdAndUpdate(id, req.body, {
+    new: true,
+    runValidators: true,
+  });
+
+  if (!updatedBlog) return res.status(400).end();
+
+  res.status(200).json(updatedBlog);
+});
+
 export default router;
