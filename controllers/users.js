@@ -16,6 +16,13 @@ userRouter.get('/', async (req, res) => {
 userRouter.post('/', async (req, res) => {
   const { username, name, password } = req.body;
 
+  if (!password) return res.status(400).json({ error: 'Missing password' });
+
+  if (password.length < 3)
+    return res
+      .status(400)
+      .json({ error: 'Minimum password length: 3 characters' });
+
   // Define Salt round
   const saltRound = 10;
   // Hash the password

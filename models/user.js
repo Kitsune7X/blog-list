@@ -3,9 +3,14 @@ import mongoose from 'mongoose';
 const { Schema } = mongoose;
 
 const userSchema = new Schema({
-  username: String,
+  username: {
+    type: String,
+    required: true,
+    unique: true,
+    minLength: [3, 'Minimum 3 characters'],
+  },
   name: String,
-  passwordHash: String,
+  passwordHash: { type: String, required: true },
   blogs: [
     {
       type: Schema.Types.ObjectId,

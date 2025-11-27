@@ -286,6 +286,22 @@ describe('When there are initially some blogs saved', () => {
 
       assert.strictEqual(userAtEnd.length, userAtStart.length + 1);
     });
+
+    // ---------- Test for unique username ----------
+    test.only('fails with status 400 when there is already an existing username', async () => {
+      const userAtStart = await User.find({});
+
+      const newUser = {
+        username: 'root',
+        password: 'foxvillage',
+      };
+
+      await api.post('/api/users').send(newUser).expect(400);
+
+      const userAtEnd = await User.find({});
+
+      assert.strictEqual(userAtStart.length, userAtEnd.length);
+    });
   });
 });
 

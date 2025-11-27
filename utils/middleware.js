@@ -23,6 +23,12 @@ const errHandler = (err, req, res, next) => {
     return res.status(400).json({ error: 'Content missing' });
   else if (err.name === 'CastError')
     return res.status(400).json({ error: err.message });
+  else if (
+    err.name === 'MongoServerError' &&
+    err.message.includes('E11000 duplicate key error')
+  )
+    return res.status(400).json({ error: 'Username must be unique' });
+
   next(err);
 };
 
