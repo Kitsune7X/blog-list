@@ -29,4 +29,6 @@ blogSchema.set('toJSON', {
   },
 });
 
-export default mongoose.model('Blog', blogSchema);
+const Blog = mongoose.model('Blog', blogSchema);
+
+export default Blog;
