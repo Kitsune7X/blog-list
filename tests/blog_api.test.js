@@ -5,6 +5,8 @@ import supertest from 'supertest';
 import app from '../app.js';
 import blogHelper from './test_helper.js';
 import Blog from '../models/blog.js';
+import User from '../models/user.js';
+import bcrypt from 'bcrypt';
 
 // Wrap the Express app in `supertest` function
 const api = supertest(app);
@@ -51,7 +53,7 @@ describe('When there are initially some blogs saved', () => {
     // Object.keys() return a array of keys. We check if each of those
     // array contain 'id'.
     const blogIdCheck = blogs.body.every((blog) =>
-      Object.keys(blog).includes('id')
+      Object.keys(blog).includes('id'),
     );
 
     assert.strictEqual(blogIdCheck, true);
@@ -249,6 +251,40 @@ describe('When there are initially some blogs saved', () => {
       const tempLikes = { likes: 100 };
 
       await api.put(`/api/blogs/${invalidId}`).send(tempLikes).expect(400);
+    });
+  });
+
+  // Test for creating user
+  describe('When there are some user in DB', () => {
+    beforeEach(async () => {
+      await User.deleteMany({});
+
+      const passwordHash = await bcrypt.hash('secret', 10);
+
+      const user = new User({ username: 'root', passwordHash });
+
+      await user.save();
+    });
+
+    // ---------- Test creation succeed ----------
+    test.only('creation succeed with a fresh username', async () => {
+      const userAtStart = await User.find({});
+
+      const newUser = {
+        username: 'Fox-kun',
+        name: 'Fox',
+        password: 'foxvillage',
+      };
+
+      await api
+        .post('/api/users')
+        .send(newUser)
+        .expect(201)
+        .expect('Content-Type', /application\/json/);
+
+      const userAtEnd = await User.find({});
+
+      assert.strictEqual(userAtEnd.length, userAtStart.length + 1);
     });
   });
 });

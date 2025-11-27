@@ -5,7 +5,7 @@ import logger from '../utils/logger.js';
 // complete middleware and routing system;
 // for this reason, it is often referred to as a “mini-app”.
 // https://expressjs.com/en/guide/routing.html
-const router = express.Router();
+const blogRouter = express.Router();
 import Blog from '../models/blog.js';
 
 // ---------- Time log middleware that is specific to this router ----------
@@ -14,18 +14,17 @@ const timeLog = (req, res, next) => {
   next();
 };
 
-router.use(timeLog);
-
+blogRouter.use(timeLog);
 
 // ---------- Get all blogs ----------
-router.get('/', async (req, res) => {
+blogRouter.get('/', async (req, res) => {
   const blogs = await Blog.find({});
 
   res.json(blogs);
 });
 
 // ---------- Add new blog ----------
-router.post('/', async (req, res) => {
+blogRouter.post('/', async (req, res) => {
   const body = req.body;
   const blog = new Blog({
     title: body.title,
@@ -39,7 +38,7 @@ router.post('/', async (req, res) => {
 });
 
 // ---------- View single blog ----------
-router.get('/:id', async (req, res) => {
+blogRouter.get('/:id', async (req, res) => {
   const id = req.params.id;
 
   const blog = await Blog.findById(id);
@@ -50,7 +49,7 @@ router.get('/:id', async (req, res) => {
 });
 
 // ---------- Delete a single blog ----------
-router.delete('/:id', async (req, res) => {
+blogRouter.delete('/:id', async (req, res) => {
   const id = req.params.id;
 
   const deletedBlog = await Blog.findByIdAndDelete(id);
@@ -60,7 +59,7 @@ router.delete('/:id', async (req, res) => {
 });
 
 // ---------- Update a single blog ----------
-router.put('/:id', async (req, res) => {
+blogRouter.put('/:id', async (req, res) => {
   const id = req.params.id;
 
   const updatedBlog = await Blog.findByIdAndUpdate(id, req.body, {
@@ -73,4 +72,4 @@ router.put('/:id', async (req, res) => {
   res.status(200).json(updatedBlog);
 });
 
-export default router;
+export default blogRouter;
