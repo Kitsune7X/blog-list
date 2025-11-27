@@ -268,7 +268,7 @@ describe('When there are initially some blogs saved', () => {
 
     // ---------- Test creation succeed ----------
     test.only('creation succeed with a fresh username', async () => {
-      const userAtStart = await User.find({});
+      const userAtStart = await blogHelper.userInDb();
 
       const newUser = {
         username: 'Fox-kun',
@@ -282,25 +282,140 @@ describe('When there are initially some blogs saved', () => {
         .expect(201)
         .expect('Content-Type', /application\/json/);
 
-      const userAtEnd = await User.find({});
+      const userAtEnd = await blogHelper.userInDb();
 
       assert.strictEqual(userAtEnd.length, userAtStart.length + 1);
+
+      const usernames = userAtEnd.map((user) => user.username);
+
+      assert(usernames.includes(newUser.username));
     });
 
     // ---------- Test for unique username ----------
     test.only('fails with status 400 when there is already an existing username', async () => {
-      const userAtStart = await User.find({});
+      const userAtStart = await blogHelper.userInDb();
 
       const newUser = {
         username: 'root',
         password: 'foxvillage',
       };
 
-      await api.post('/api/users').send(newUser).expect(400);
+      const result = await api.post('/api/users').send(newUser).expect(400);
 
-      const userAtEnd = await User.find({});
+      const userAtEnd = await blogHelper.userInDb();
 
       assert.strictEqual(userAtStart.length, userAtEnd.length);
+      assert(result.body.error.includes('Username must be unique'));
+    });
+
+    // ---------- Test for username missing ----------
+    test.only('fails with status 400 when username is not present', async () => {
+      const userAtStart = await blogHelper.userInDb();
+
+      const newUser = {
+        name: 'Gold Fish',
+        password: 'aqua',
+      };
+
+      const result = await api
+        .post('/api/users')
+        .send(newUser)
+        .expect(400)
+        .expect('Content-Type', /application\/json/);
+
+      const userAtEnd = await blogHelper.userInDb();
+      assert.strictEqual(userAtEnd.length, userAtStart.length);
+
+      assert(result.body.error.includes('Username missing'));
+    });
+
+    // ---------- Test for username less than min length  ----------
+    test.only('fails with status 400 when username is less than 3 characters', async () => {
+      const userAtStart = await blogHelper.userInDb();
+
+      const newUser = {
+        username: 'Fi',
+        name: 'Gold Fish',
+        password: 'aqua',
+      };
+
+      const result = await api
+        .post('/api/users')
+        .send(newUser)
+        .expect(400)
+        .expect('Content-Type', /application\/json/);
+
+      const userAtEnd = await blogHelper.userInDb();
+      assert.strictEqual(userAtEnd.length, userAtStart.length);
+
+      assert(result.body.error.includes('Minimum 3 characters'));
+    });
+
+    // ---------- Test for password missing ----------
+    test.only('fails with status 400 when password is missing', async () => {
+      const userAtStart = await blogHelper.userInDb();
+
+      const newUser = {
+        username: 'Fish',
+        name: 'Gold Fish',
+      };
+
+      const result = await api
+        .post('/api/users')
+        .send(newUser)
+        .expect(400)
+        .expect('Content-Type', /application\/json/);
+
+      const userAtEnd = await blogHelper.userInDb();
+      assert.strictEqual(userAtEnd.length, userAtStart.length);
+
+      assert(result.body.error.includes('Password missing'));
+    });
+
+    // ---------- Test for password not long enough ----------
+    test.only('fails with status 400 when password length is less than 3 characters', async () => {
+      const userAtStart = await blogHelper.userInDb();
+
+      const newUser = {
+        username: 'Fish',
+        name: 'Gold Fish',
+        password: 'aq',
+      };
+
+      const result = await api
+        .post('/api/users')
+        .send(newUser)
+        .expect(400)
+        .expect('Content-Type', /application\/json/);
+
+      const userAtEnd = await blogHelper.userInDb();
+      assert.strictEqual(userAtEnd.length, userAtStart.length);
+
+      assert(
+        result.body.error.includes('Minimum password length: 3 characters'),
+      );
+    });
+
+    // ---------- Test for no name ----------
+    test.only('default to `no name` when no name is given', async () => {
+      const userAtStart = await blogHelper.userInDb();
+
+      const newUser = {
+        username: 'Fish',
+        password: 'aqua',
+      };
+
+      await api
+        .post('/api/users')
+        .send(newUser)
+        .expect(201)
+        .expect('Content-Type', /application\/json/);
+
+      const userAtEnd = await blogHelper.userInDb();
+      assert.strictEqual(userAtEnd.length, userAtStart.length + 1);
+
+      const names = userAtEnd.map((user) => user.name);
+      assert(names.includes('no name'));
     });
   });
 });

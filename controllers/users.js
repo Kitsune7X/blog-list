@@ -16,7 +16,7 @@ userRouter.get('/', async (req, res) => {
 userRouter.post('/', async (req, res) => {
   const { username, name, password } = req.body;
 
-  if (!password) return res.status(400).json({ error: 'Missing password' });
+  if (!password) return res.status(400).json({ error: 'Password missing' });
 
   if (password.length < 3)
     return res
@@ -30,7 +30,7 @@ userRouter.post('/', async (req, res) => {
 
   const user = new User({
     username,
-    name,
+    name: name || 'no name',
     passwordHash,
   });
 
