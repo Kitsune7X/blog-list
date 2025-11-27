@@ -1,5 +1,6 @@
 import express from 'express';
 import blogRouter from './controllers/blogs.js';
+import userRouter from './controllers/users.js';
 import config from './utils/config.js';
 import logger from './utils/logger.js';
 import mongoose from 'mongoose';
@@ -17,8 +18,8 @@ morgan.token('body', (req) => JSON.stringify(req.body));
 if (process.env.NODE_ENV !== 'test') {
   app.use(
     morgan(
-      ':method :url :status :response-time ms - :res[content-length] :body'
-    )
+      ':method :url :status :response-time ms - :res[content-length] :body',
+    ),
   );
 }
 
@@ -37,8 +38,11 @@ app.use(reqLogger);
 // ---------- Welcome page ----------
 app.get('/', (req, res) => res.send('<h1>WELCOME!</h1>'));
 
-// ---------- Pass request to '/' to router 'mini-app' ----------
+// ---------- Pass request to '/api/blogs' to router 'mini-app' ----------
 app.use('/api/blogs', blogRouter);
+
+// ---------- Pass request to '/api/users' to user router ----------
+app.use('/api/users', userRouter);
 
 // ---------- Handle invalid address ----------
 app.use(unknownEndpoint);
@@ -47,3 +51,5 @@ app.use(unknownEndpoint);
 app.use(errHandler);
 
 export default app;
+
+// TODO: add route handling for user

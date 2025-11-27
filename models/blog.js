@@ -17,6 +17,10 @@ const blogSchema = new Schema({
     required: [true, 'Link missing'],
   },
   likes: Number,
+  user: {
+    type: Schema.Types.ObjectId,
+    ref: 'User',
+  },
 });
 
 // ---------- Reformat the output to be nicer ----------
