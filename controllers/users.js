@@ -5,6 +5,13 @@ import User from '../models/user.js';
 
 const userRouter = express.Router();
 
+// ---------- View all users ----------
+userRouter.get('/', async (req, res) => {
+  const users = await User.find({});
+
+  res.status(200).json(users);
+});
+
 // ---------- Add new user ----------
 userRouter.post('/', async (req, res) => {
   const { username, name, password } = req.body;
