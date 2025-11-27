@@ -3,7 +3,7 @@ import blogRouter from './controllers/blogs.js';
 import config from './utils/config.js';
 import logger from './utils/logger.js';
 import mongoose from 'mongoose';
-import middleware from './utils/middleware.js';
+import { errHandler, unknownEndpoint, reqLogger } from './utils/middleware.js';
 import morgan from 'morgan';
 
 // Call the Express factory function to create app instance
@@ -32,15 +32,18 @@ mongoose
 app.use(express.json());
 
 // ---------- Logging request ----------
-app.use(middleware.reqLogger);
+app.use(reqLogger);
+
+// ---------- Welcome page ----------
+app.get('/', (req, res) => res.send('<h1>WELCOME!</h1>'));
 
 // ---------- Pass request to '/' to router 'mini-app' ----------
-app.use('/', blogRouter);
+app.use('/api/blogs', blogRouter);
 
 // ---------- Handle invalid address ----------
-app.use(middleware.unknownEndpoint);
+app.use(unknownEndpoint);
 
 // ---------- Handle error ----------
-app.use(middleware.errHandler);
+app.use(errHandler);
 
 export default app;

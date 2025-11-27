@@ -26,4 +26,4 @@ const errHandler = (err, req, res, next) => {
   next(err);
 };
 
-export default { reqLogger, unknownEndpoint, errHandler };
+export { reqLogger, unknownEndpoint, errHandler };

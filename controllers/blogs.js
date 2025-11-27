@@ -16,18 +16,16 @@ const timeLog = (req, res, next) => {
 
 router.use(timeLog);
 
-// ---------- Welcome page ----------
-router.get('/', (req, res) => res.send('<h1>WELCOME!</h1>'));
 
 // ---------- Get all blogs ----------
-router.get('/api/blogs', async (req, res) => {
+router.get('/', async (req, res) => {
   const blogs = await Blog.find({});
 
   res.json(blogs);
 });
 
 // ---------- Add new blog ----------
-router.post('/api/blogs', async (req, res) => {
+router.post('/', async (req, res) => {
   const body = req.body;
   const blog = new Blog({
     title: body.title,
@@ -41,7 +39,7 @@ router.post('/api/blogs', async (req, res) => {
 });
 
 // ---------- View single blog ----------
-router.get('/api/blogs/:id', async (req, res) => {
+router.get('/:id', async (req, res) => {
   const id = req.params.id;
 
   const blog = await Blog.findById(id);
@@ -52,7 +50,7 @@ router.get('/api/blogs/:id', async (req, res) => {
 });
 
 // ---------- Delete a single blog ----------
-router.delete('/api/blogs/:id', async (req, res) => {
+router.delete('/:id', async (req, res) => {
   const id = req.params.id;
 
   const deletedBlog = await Blog.findByIdAndDelete(id);
@@ -62,7 +60,7 @@ router.delete('/api/blogs/:id', async (req, res) => {
 });
 
 // ---------- Update a single blog ----------
-router.put('/api/blogs/:id', async (req, res) => {
+router.put('/:id', async (req, res) => {
   const id = req.params.id;
 
   const updatedBlog = await Blog.findByIdAndUpdate(id, req.body, {

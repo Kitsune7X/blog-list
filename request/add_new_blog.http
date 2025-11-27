@@ -1,0 +1,11 @@
+###
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+
+{
+  "title": "Art in Motion: The Charismatic Enigma",
+  "author": "Jeff Hardy",
+  "url": "https://wwe.com/articles/jeff-hardy-art-in-motion",
+  "likes": 22
+}
+###
