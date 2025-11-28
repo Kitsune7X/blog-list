@@ -7,6 +7,7 @@ import logger from '../utils/logger.js';
 // https://expressjs.com/en/guide/routing.html
 const blogRouter = express.Router();
 import Blog from '../models/blog.js';
+import User from '../models/user.js';
 
 // ---------- Time log middleware that is specific to this router ----------
 const timeLog = (req, res, next) => {
@@ -18,7 +19,11 @@ blogRouter.use(timeLog);
 
 // ---------- Get all blogs ----------
 blogRouter.get('/', async (req, res) => {
-  const blogs = await Blog.find({});
+  const blogs = await Blog.find({}).populate('user', {
+    username: 1,
+    name: 1,
+    id: 1,
+  });
 
   res.json(blogs);
 });
@@ -26,14 +31,22 @@ blogRouter.get('/', async (req, res) => {
 // ---------- Add new blog ----------
 blogRouter.post('/', async (req, res) => {
   const body = req.body;
+
+  const users = await User.find({});
+  const firstUser = users[0];
+
   const blog = new Blog({
     title: body.title,
     author: body.author,
     url: body.url,
     likes: body.likes || 0,
+    user: firstUser._id,
   });
 
   const savedBlog = await blog.save();
+  firstUser.blogs = [...firstUser.blogs, savedBlog._id];
+  await firstUser.save();
+
   res.status(201).json(savedBlog);
 });
 

@@ -91,12 +91,17 @@ describe('When there are initially some blogs saved', () => {
 
   describe('Post a new blog', () => {
     // ---------- Test Posting function ----------
-    test('Post a new blog works', async () => {
+    test.only('Post a new blog works', async () => {
+      const users = await blogHelper.userInDb();
+      const userToTest = users[0];
+      console.log(userToTest);
+
       const newBlog = {
         title: 'Rise of the Apex Predator',
         author: 'Randy Orton',
         url: 'https://wwe.com/articles/orton-apex',
         likes: 9,
+        user: userToTest.id,
       };
 
       await api
@@ -106,6 +111,7 @@ describe('When there are initially some blogs saved', () => {
         .expect('Content-Type', /application\/json/);
 
       const blogsAtEnd = await blogHelper.blogsInDb();
+      console.log(blogsAtEnd);
 
       // Check if the length of the new array === initialBlogs + 1
       assert.strictEqual(blogsAtEnd.length, blogHelper.initialBlogs.length + 1);
@@ -267,7 +273,7 @@ describe('When there are initially some blogs saved', () => {
     });
 
     // ---------- Test creation succeed ----------
-    test.only('creation succeed with a fresh username', async () => {
+    test('creation succeed with a fresh username', async () => {
       const userAtStart = await blogHelper.userInDb();
 
       const newUser = {
@@ -292,7 +298,7 @@ describe('When there are initially some blogs saved', () => {
     });
 
     // ---------- Test for unique username ----------
-    test.only('fails with status 400 when there is already an existing username', async () => {
+    test('fails with status 400 when there is already an existing username', async () => {
       const userAtStart = await blogHelper.userInDb();
 
       const newUser = {
@@ -309,7 +315,7 @@ describe('When there are initially some blogs saved', () => {
     });
 
     // ---------- Test for username missing ----------
-    test.only('fails with status 400 when username is not present', async () => {
+    test('fails with status 400 when username is not present', async () => {
       const userAtStart = await blogHelper.userInDb();
 
       const newUser = {
@@ -330,7 +336,7 @@ describe('When there are initially some blogs saved', () => {
     });
 
     // ---------- Test for username less than min length  ----------
-    test.only('fails with status 400 when username is less than 3 characters', async () => {
+    test('fails with status 400 when username is less than 3 characters', async () => {
       const userAtStart = await blogHelper.userInDb();
 
       const newUser = {
@@ -352,7 +358,7 @@ describe('When there are initially some blogs saved', () => {
     });
 
     // ---------- Test for password missing ----------
-    test.only('fails with status 400 when password is missing', async () => {
+    test('fails with status 400 when password is missing', async () => {
       const userAtStart = await blogHelper.userInDb();
 
       const newUser = {
@@ -373,7 +379,7 @@ describe('When there are initially some blogs saved', () => {
     });
 
     // ---------- Test for password not long enough ----------
-    test.only('fails with status 400 when password length is less than 3 characters', async () => {
+    test('fails with status 400 when password length is less than 3 characters', async () => {
       const userAtStart = await blogHelper.userInDb();
 
       const newUser = {
@@ -397,7 +403,7 @@ describe('When there are initially some blogs saved', () => {
     });
 
     // ---------- Test for no name ----------
-    test.only('default to `no name` when no name is given', async () => {
+    test('default to `no name` when no name is given', async () => {
       const userAtStart = await blogHelper.userInDb();
 
       const newUser = {
