@@ -1,6 +1,7 @@
 import express from 'express';
 import blogRouter from './controllers/blogs.js';
 import userRouter from './controllers/users.js';
+import loginRouter from './controllers/login.js';
 import config from './utils/config.js';
 import logger from './utils/logger.js';
 import mongoose from 'mongoose';
@@ -40,6 +41,9 @@ app.get('/', (req, res) => res.send('<h1>WELCOME!</h1>'));
 
 // ---------- Pass request to '/api/blogs' to router 'mini-app' ----------
 app.use('/api/blogs', blogRouter);
+
+// ---------- Pass request to '/api/login' to login router ----------
+app.use('/api/login', loginRouter);
 
 // ---------- Pass request to '/api/users' to user router ----------
 app.use('/api/users', userRouter);
