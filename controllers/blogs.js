@@ -8,6 +8,7 @@ import logger from '../utils/logger.js';
 const blogRouter = express.Router();
 import Blog from '../models/blog.js';
 import User from '../models/user.js';
+import jwt from 'jsonwebtoken';
 
 // ---------- Time log middleware that is specific to this router ----------
 const timeLog = (req, res, next) => {
@@ -16,6 +17,15 @@ const timeLog = (req, res, next) => {
 };
 
 blogRouter.use(timeLog);
+
+// ---------- Get Authorization Token from header ----------
+const getTokenFrom = (req) => {
+  const authorization = req.get('authorization');
+  if (authorization && authorization.startsWith('Bearer '))
+    return authorization.replace('Bearer ', '');
+
+  return null;
+};
 
 // ---------- Get all blogs ----------
 blogRouter.get('/', async (req, res) => {
@@ -31,21 +41,27 @@ blogRouter.get('/', async (req, res) => {
 // ---------- Add new blog ----------
 blogRouter.post('/', async (req, res) => {
   const body = req.body;
+  const decodedToken = jwt.verify(getTokenFrom(req), process.env.SECRET);
 
-  const users = await User.find({});
-  const firstUser = users[0];
+  console.log(decodedToken);
+
+  if (!decodedToken.id) return res.status(401).json({ error: 'token invalid' });
+
+  const user = await User.findById(decodedToken.id);
+
+  if (!user) return res.status(400).json({ error: 'User not found' });
 
   const blog = new Blog({
     title: body.title,
     author: body.author,
     url: body.url,
     likes: body.likes || 0,
-    user: firstUser._id,
+    user: user._id,
   });
 
   const savedBlog = await blog.save();
-  firstUser.blogs = [...firstUser.blogs, savedBlog._id];
-  await firstUser.save();
+  user.blogs = [...user.blogs, savedBlog._id];
+  await user.save();
 
   res.status(201).json(savedBlog);
 });
