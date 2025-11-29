@@ -20,6 +20,7 @@ blogRouter.use(timeLog);
 
 // ---------- Get Authorization Token from header ----------
 const getTokenFrom = (req) => {
+  // console.log(req);
   const authorization = req.get('authorization');
   if (authorization && authorization.startsWith('Bearer '))
     return authorization.replace('Bearer ', '');
@@ -41,9 +42,12 @@ blogRouter.get('/', async (req, res) => {
 // ---------- Add new blog ----------
 blogRouter.post('/', async (req, res) => {
   const body = req.body;
-  const decodedToken = jwt.verify(getTokenFrom(req), process.env.SECRET);
+  if (req.token) {
+    console.log(req.token);
+  }
+  const decodedToken = jwt.verify(req.token, process.env.SECRET);
 
-  console.log(decodedToken);
+  // console.log(decodedToken);
 
   if (!decodedToken.id) return res.status(401).json({ error: 'token invalid' });
 

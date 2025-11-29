@@ -1,4 +1,5 @@
 import logger from './logger.js';
+// import jwt from 'jsonwebtoken';
 
 // ---------- Request logger ----------
 const reqLogger = (req, res, next) => {
@@ -7,6 +8,16 @@ const reqLogger = (req, res, next) => {
   logger.info('Path ', req.path);
   logger.info('Body ', req.body);
   logger.info('----------------');
+  next();
+};
+
+// ---------- Token extractor ----------
+const tokenExtractor = (req, res, next) => {
+  const authorization = req.get('authorization');
+
+  if (authorization && authorization.startsWith('Bearer '))
+    return (req.token = authorization.replace('Bearer ', ''));
+
   next();
 };
 
@@ -34,4 +45,4 @@ const errHandler = (err, req, res, next) => {
   next(err);
 };
 
-export { reqLogger, unknownEndpoint, errHandler };
+export { reqLogger, tokenExtractor, unknownEndpoint, errHandler };

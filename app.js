@@ -5,7 +5,12 @@ import loginRouter from './controllers/login.js';
 import config from './utils/config.js';
 import logger from './utils/logger.js';
 import mongoose from 'mongoose';
-import { errHandler, unknownEndpoint, reqLogger } from './utils/middleware.js';
+import {
+  errHandler,
+  tokenExtractor,
+  unknownEndpoint,
+  reqLogger,
+} from './utils/middleware.js';
 import morgan from 'morgan';
 
 // Call the Express factory function to create app instance
@@ -39,6 +44,8 @@ app.use(reqLogger);
 // ---------- Welcome page ----------
 app.get('/', (req, res) => res.send('<h1>WELCOME!</h1>'));
 
+// ---------- Token extractor ----------
+app.use('api/blogs', tokenExtractor);
 // ---------- Pass request to '/api/blogs' to router 'mini-app' ----------
 app.use('/api/blogs', blogRouter);
 
