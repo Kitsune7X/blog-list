@@ -1,5 +1,4 @@
 import logger from './logger.js';
-// import jwt from 'jsonwebtoken';
 
 // ---------- Request logger ----------
 const reqLogger = (req, res, next) => {
@@ -13,10 +12,13 @@ const reqLogger = (req, res, next) => {
 
 // ---------- Token extractor ----------
 const tokenExtractor = (req, res, next) => {
+  logger.info('PLEASE WORK!');
+
   const authorization = req.get('authorization');
+  logger.info(authorization);
 
   if (authorization && authorization.startsWith('Bearer '))
-    return (req.token = authorization.replace('Bearer ', ''));
+    req.token = authorization.replace('Bearer ', '');
 
   next();
 };

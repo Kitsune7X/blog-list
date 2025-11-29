@@ -45,7 +45,7 @@ app.use(reqLogger);
 app.get('/', (req, res) => res.send('<h1>WELCOME!</h1>'));
 
 // ---------- Token extractor ----------
-app.use('api/blogs', tokenExtractor);
+app.use('/api/blogs', tokenExtractor);
 // ---------- Pass request to '/api/blogs' to router 'mini-app' ----------
 app.use('/api/blogs', blogRouter);
 

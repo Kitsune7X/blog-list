@@ -16,7 +16,7 @@
   "main": "index.js",
   "scripts": {
     "start": "cross-env NODE_ENV=production node index.js",
-    "dev": "cross-env NODE_ENV=development node --watch index.js",
+    "dev": "cross-env NODE_ENV=development node --watch --inspect index.js",
     "test": "cross-env NODE_ENV=test node --inspect --test",
     "test-only": "cross-env NODE_ENV=test node --test --test-only",
     "lint": "eslint ."
