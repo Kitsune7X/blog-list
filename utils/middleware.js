@@ -14,11 +14,14 @@ const reqLogger = (req, res, next) => {
 const tokenExtractor = (req, res, next) => {
   logger.info('PLEASE WORK!');
 
+  // Note to self: Express only call middleware with a `req` object, it won't run
+  // without one. Early version had `if (!req) return null` but it is unnecessary
   const authorization = req.get('authorization');
   // logger.info(authorization);
 
-  if (authorization && authorization.startsWith('Bearer '))
-    req.token = authorization.replace('Bearer ', '');
+  if (authorization && authorization.startsWith('Bearer ')) {
+    req.token = authorization.slice(7); // Slice and return a new str at where 'Bearer ' end
+  }
 
   next();
 };

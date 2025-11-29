@@ -41,11 +41,12 @@ app.use(express.json());
 // ---------- Logging request ----------
 app.use(reqLogger);
 
+// ---------- Token extractor ----------
+app.use(tokenExtractor);
+
 // ---------- Welcome page ----------
 app.get('/', (req, res) => res.send('<h1>WELCOME!</h1>'));
 
-// ---------- Token extractor ----------
-app.use('/api/blogs', tokenExtractor);
 // ---------- Pass request to '/api/blogs' to router 'mini-app' ----------
 app.use('/api/blogs', blogRouter);
 
