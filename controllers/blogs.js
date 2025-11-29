@@ -18,16 +18,6 @@ const timeLog = (req, res, next) => {
 
 blogRouter.use(timeLog);
 
-// ---------- Get Authorization Token from header ----------
-const getTokenFrom = (req) => {
-  // console.log(req);
-  const authorization = req.get('authorization');
-  if (authorization && authorization.startsWith('Bearer '))
-    return (req.token = authorization.replace('Bearer ', ''));
-
-  return null;
-};
-
 // ---------- Get all blogs ----------
 blogRouter.get('/', async (req, res) => {
   const blogs = await Blog.find({}).populate('user', {
