@@ -95,3 +95,7 @@ blogRouter.put('/:id', async (req, res) => {
 });
 
 export default blogRouter;
+
+// Set up so that blog delete is only possible with the user who added it
+// Need to send a token, decode to the token and check if the decodedToken.id is the
+// same as `user` in blog. If so, then delete.

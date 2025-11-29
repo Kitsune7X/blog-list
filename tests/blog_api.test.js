@@ -94,7 +94,6 @@ describe('When there are initially some blogs saved', () => {
     test.only('Post a new blog works', async () => {
       const users = await blogHelper.userInDb();
       const userToTest = users[0];
-      console.log(userToTest);
 
       const newBlog = {
         title: 'Rise of the Apex Predator',
