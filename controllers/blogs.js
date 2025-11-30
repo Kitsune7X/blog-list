@@ -93,6 +93,7 @@ blogRouter.delete('/:id', async (req, res) => {
     user.blogs = user.blogs.filter(
       (blog) => blog.toString() !== blogToDelete._id.toString(),
     );
+
     await user.save();
     return res.status(204).end();
   }
