@@ -1,15 +1,13 @@
 import express from 'express';
+import Blog from '../models/blog.js';
 import logger from '../utils/logger.js';
+import { userExtractor } from '../utils/middleware.js';
 // Use the express.Router class to create modular,
 // mountable route handlers. A Router instance is a
 // complete middleware and routing system;
 // for this reason, it is often referred to as a “mini-app”.
 // https://expressjs.com/en/guide/routing.html
 const blogRouter = express.Router();
-import Blog from '../models/blog.js';
-import User from '../models/user.js';
-import jwt from 'jsonwebtoken';
-import { userExtractor } from '../utils/middleware.js';
 
 // ---------- Time log middleware that is specific to this router ----------
 const timeLog = (req, res, next) => {
@@ -34,14 +32,7 @@ blogRouter.get('/', async (req, res) => {
 blogRouter.post('/', userExtractor, async (req, res) => {
   const body = req.body;
 
-  const decodedToken = jwt.verify(req.token, process.env.SECRET);
-
-  console.log(decodedToken);
-  console.log({ token: req.token });
-
-  if (!decodedToken.id) return res.status(401).json({ error: 'token invalid' });
-
-  const user = await User.findById(decodedToken.id);
+  const user = req.user;
 
   if (!user) return res.status(400).json({ error: 'User not found' });
 
@@ -75,18 +66,12 @@ blogRouter.get('/:id', async (req, res) => {
 blogRouter.delete('/:id', userExtractor, async (req, res) => {
   const id = req.params.id;
 
-  // console.log({ tokenDel: req.token });
-
-  const decodedToken = jwt.verify(req.token, process.env.SECRET);
-
-  if (!decodedToken.id) return res.status(400).json({ error: 'Token invalid' });
-
-  const user = await User.findById(decodedToken.id);
+  const user = req.user;
   if (!user) return res.status(400).json({ error: 'User not found' });
-  console.log({ userID: user._id.toString(), userBlogs: user.blogs });
+  // console.log({ userID: user._id.toString(), userBlogs: user.blogs });
 
   const blogToDelete = await Blog.findById(id);
-  console.log({ blogUserId: blogToDelete.user.toString() });
+  // console.log({ blogUserId: blogToDelete.user.toString() });
   if (!blogToDelete) return res.status(400).end();
 
   if (blogToDelete.user.toString() === user._id.toString()) {
