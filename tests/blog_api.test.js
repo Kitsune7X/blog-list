@@ -18,7 +18,6 @@ describe('When there are initially some blogs saved', () => {
     await Blog.deleteMany({});
 
     await Blog.insertMany(blogHelper.initialBlogs);
-    // console.log('Initialize Data complete');
   });
 
   // ---------- Test correct Content type ----------
@@ -32,7 +31,6 @@ describe('When there are initially some blogs saved', () => {
   // ---------- Test all blogs are returned ----------
   test('All blogs are returned', async () => {
     const blogs = await api.get('/api/blogs');
-    // console.log(blogs.body);
 
     assert.strictEqual(blogs.body.length, blogHelper.initialBlogs.length);
   });
@@ -92,7 +90,7 @@ describe('When there are initially some blogs saved', () => {
 
   describe('Post a new blog', () => {
     // ---------- Test Posting function ----------
-    test.only('Post a new blog works', async () => {
+    test('Post a new blog works', async () => {
       const blogsAtStart = await blogHelper.blogsInDb();
 
       const users = await blogHelper.userInDb();
@@ -102,10 +100,8 @@ describe('When there are initially some blogs saved', () => {
         username: userToTest.username,
         id: userToTest.id,
       };
-      console.log(dataForToken);
 
       const token = jwt.sign(dataForToken, process.env.SECRET);
-      console.log(token);
 
       const newBlog = {
         title: 'Rise of the Apex Predator',
@@ -123,7 +119,6 @@ describe('When there are initially some blogs saved', () => {
         .expect('Content-Type', /application\/json/);
 
       const blogsAtEnd = await blogHelper.blogsInDb();
-      console.log(blogsAtEnd);
 
       // Check if the length of the new array === initialBlogs + 1
       assert.strictEqual(blogsAtEnd.length, blogsAtStart.length + 1);
@@ -135,7 +130,7 @@ describe('When there are initially some blogs saved', () => {
     });
 
     // ---------- Test for when token is not provided ----------
-    test.only('fail with status 401 when token is not provided', async () => {
+    test('fail with status 401 when token is not provided', async () => {
       const blogsAtStart = await blogHelper.blogsInDb();
 
       const users = await blogHelper.userInDb();
@@ -160,28 +155,56 @@ describe('When there are initially some blogs saved', () => {
 
     // ---------- Test for invalid blog post ----------
     test('Blog with empty body will not be added', async () => {
+      const blogsAtStart = await blogHelper.blogsInDb();
+
       const blogWithoutBody = {};
 
-      await api.post('/api/blogs').send(blogWithoutBody).expect(400);
+      const users = await blogHelper.userInDb();
+      const userToTest = users[0];
+
+      const dataForToken = {
+        username: userToTest.username,
+        id: userToTest.id,
+      };
+
+      const token = jwt.sign(dataForToken, process.env.SECRET);
+
+      await api
+        .post('/api/blogs')
+        .set('Authorization', `Bearer ${token}`)
+        .send(blogWithoutBody)
+        .expect(400);
 
       // Verify that the amount of blogs does not change
       const blogsAtEnd = await Blog.find({});
 
-      assert.strictEqual(blogsAtEnd.length, blogHelper.initialBlogs.length);
+      assert.strictEqual(blogsAtEnd.length, blogsAtStart.length);
     });
 
     // ---------- Test for missing `likes` property ----------
     // If the `likes` property is missing from `req`, default to 0
     test('When "Likes" is missing, default to 0', async () => {
+      const users = await blogHelper.userInDb();
+      const userToTest = users[0];
+
+      const dataForToken = {
+        username: userToTest.username,
+        id: userToTest.id,
+      };
+
+      const token = jwt.sign(dataForToken, process.env.SECRET);
+
       const blogWithoutLikes = {
         title: "The Game's Evolution",
         author: 'Triple H',
         url: 'https://wwe.com/articles/triple-h-evolution',
+        user: userToTest.id,
       };
 
       // Test if the blog is successfully posted first
       await api
         .post('/api/blogs')
+        .set('Authorization', `Bearer ${token}`)
         .send(blogWithoutLikes)
         .expect(201)
         .expect('Content-Type', /application\/json/);
@@ -193,48 +216,101 @@ describe('When there are initially some blogs saved', () => {
 
     // ---------- Test for missing `Title` ----------
     test('Blog without "Title" will not be added', async () => {
+      const blogsAtStart = await blogHelper.blogsInDb();
+
+      const users = await blogHelper.userInDb();
+      const userToTest = users[0];
+
+      const dataForToken = {
+        username: userToTest.username,
+        id: userToTest.id,
+      };
+
+      const token = jwt.sign(dataForToken, process.env.SECRET);
+
       const blogWithoutTitle = {
         author: 'The Undertaker',
         url: 'https://wwe.com/articles/undertaker-aura',
         likes: 31,
+        user: userToTest.id,
       };
 
-      await api.post('/api/blogs').send(blogWithoutTitle).expect(400);
+      await api
+        .post('/api/blogs')
+        .set('Authorization', `Bearer ${token}`)
+        .send(blogWithoutTitle)
+        .expect(400);
 
       // Verify that the amount of blogs does not change
       const blogsAtEnd = await Blog.find({});
 
-      assert.strictEqual(blogsAtEnd.length, blogHelper.initialBlogs.length);
+      assert.strictEqual(blogsAtEnd.length, blogsAtStart.length);
     });
 
     // ---------- Test for missing Author ----------
     test('Blog without "Author" will not be added', async () => {
+      const blogsAtStart = await blogHelper.blogsInDb();
+
+      const users = await blogHelper.userInDb();
+      const userToTest = users[0];
+
+      const dataForToken = {
+        username: userToTest.username,
+        id: userToTest.id,
+        user: userToTest.id,
+      };
+
+      const token = jwt.sign(dataForToken, process.env.SECRET);
+
       const blogWithoutAuthor = {
         title: "The Deadman's Aura",
         url: 'https://wwe.com/articles/undertaker-aura',
         likes: 31,
+        user: userToTest.id,
       };
 
-      await api.post('/api/blogs').send(blogWithoutAuthor).expect(400);
+      await api
+        .post('/api/blogs')
+        .set('Authorization', `Bearer ${token}`)
+        .send(blogWithoutAuthor)
+        .expect(400);
 
       const blogsAtEnd = await Blog.find({});
 
-      assert.strictEqual(blogsAtEnd.length, blogHelper.initialBlogs.length);
+      assert.strictEqual(blogsAtEnd.length, blogsAtStart.length);
     });
 
     // ---------- Test for missing Url ----------
     test('Blog without "Url" will not be added', async () => {
+      const blogsAtStart = await blogHelper.blogsInDb();
+
+      const users = await blogHelper.userInDb();
+      const userToTest = users[0];
+
+      const dataForToken = {
+        username: userToTest.username,
+        id: userToTest.id,
+        user: userToTest.id,
+      };
+
+      const token = jwt.sign(dataForToken, process.env.SECRET);
+
       const blogWithoutUrl = {
         title: "The Deadman's Aura",
         author: 'The Undertaker',
         likes: 31,
+        user: userToTest.id,
       };
 
-      await api.post('/api/blogs').send(blogWithoutUrl).expect(400);
+      await api
+        .post('/api/blogs')
+        .set('Authorization', `Bearer ${token}`)
+        .send(blogWithoutUrl)
+        .expect(400);
 
       const blogsAtEnd = await Blog.find({});
 
-      assert.strictEqual(blogsAtEnd.length, blogHelper.initialBlogs.length);
+      assert.strictEqual(blogsAtEnd.length, blogsAtStart.length);
     });
   });
 

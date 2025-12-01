@@ -1,5 +1,6 @@
 import Blog from '../models/blog.js';
 import User from '../models/user.js';
+import jwt from 'jsonwebtoken';
 
 // Dummy data
 const initialBlogs = [

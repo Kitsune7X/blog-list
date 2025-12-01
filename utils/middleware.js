@@ -14,14 +14,11 @@ const reqLogger = (req, res, next) => {
 
 // ---------- Token extractor ----------
 const tokenExtractor = (req, res, next) => {
-  // logger.info('PLEASE WORK!');
-  // logger.info(req.method);
   if (req.method === 'GET') return next();
 
   // Note to self: Express only call middleware with a `req` object, it won't run
   // without one. Early version had `if (!req) return null` but it is unnecessary
   const authorization = req.get('authorization');
-  // logger.info(authorization);
 
   if (authorization && authorization.startsWith('Bearer ')) {
     req.token = authorization.slice(7); // Slice and return a new str at where 'Bearer ' end
@@ -60,7 +57,7 @@ const errHandler = (err, req, res, next) => {
     err.name === 'MongoServerError' &&
     err.message.includes('E11000 duplicate key error')
   )
-    return res.status(401).json({ error: 'Username must be unique' });
+    return res.status(400).json({ error: 'Username must be unique' });
   else if (err.name === 'JsonWebTokenError')
     return res.status(401).json({ error: 'Token invalid' });
 

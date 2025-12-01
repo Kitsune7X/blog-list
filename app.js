@@ -34,7 +34,7 @@ if (process.env.NODE_ENV !== 'test') {
 mongoose
   .connect(config.MONGODB_URI, { family: 4 })
   .then(() => logger.info('Connected to MongoDB'))
-  .catch((err) => console.log('Error connecting to MongoDB', err.message));
+  .catch((err) => logger.error('Error connecting to MongoDB', err.message));
 
 // ---------- Parse Json ----------
 app.use(express.json());
@@ -64,5 +64,3 @@ app.use(unknownEndpoint);
 app.use(errHandler);
 
 export default app;
-
-// TODO: add route handling for user

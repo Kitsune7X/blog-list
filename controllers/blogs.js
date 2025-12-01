@@ -56,7 +56,7 @@ blogRouter.get('/:id', async (req, res) => {
   const id = req.params.id;
 
   const blog = await Blog.findById(id);
-  // logger.info(blog);
+
   if (!blog) {
     res.status(404).json({ error: 'Non exist blog' });
   } else res.status(200).json(blog);
@@ -68,10 +68,9 @@ blogRouter.delete('/:id', userExtractor, async (req, res) => {
 
   const user = req.user;
   if (!user) return res.status(401).json({ error: 'User not found' });
-  // console.log({ userID: user._id.toString(), userBlogs: user.blogs });
 
   const blogToDelete = await Blog.findById(id);
-  // console.log({ blogUserId: blogToDelete.user.toString() });
+
   if (!blogToDelete) return res.status(400).end();
 
   if (blogToDelete.user.toString() === user._id.toString()) {
