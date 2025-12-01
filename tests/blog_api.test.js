@@ -93,9 +93,10 @@ describe('When there are initially some blogs saved', () => {
   describe('Post a new blog', () => {
     // ---------- Test Posting function ----------
     test.only('Post a new blog works', async () => {
+      const blogsAtStart = await blogHelper.blogsInDb();
+
       const users = await blogHelper.userInDb();
       const userToTest = users[0];
-      console.log(userToTest);
 
       const dataForToken = {
         username: userToTest.username,
@@ -125,7 +126,7 @@ describe('When there are initially some blogs saved', () => {
       console.log(blogsAtEnd);
 
       // Check if the length of the new array === initialBlogs + 1
-      assert.strictEqual(blogsAtEnd.length, blogHelper.initialBlogs.length + 1);
+      assert.strictEqual(blogsAtEnd.length, blogsAtStart.length + 1);
 
       // Check if the posted Blog is the same as `newBlog`
       const titles = blogsAtEnd.map((blog) => blog.title);
@@ -134,6 +135,28 @@ describe('When there are initially some blogs saved', () => {
     });
 
     // ---------- Test for when token is not provided ----------
+    test.only('fail with status 401 when token is not provided', async () => {
+      const blogsAtStart = await blogHelper.blogsInDb();
+
+      const users = await blogHelper.userInDb();
+      const userToTest = users[0];
+
+      const newBlog = {
+        title: 'Rise of the Apex Predator',
+        author: 'Randy Orton',
+        url: 'https://wwe.com/articles/orton-apex',
+        likes: 9,
+        user: userToTest.id,
+      };
+
+      const result = await api.post('/api/blogs').send(newBlog).expect(401);
+
+      const blogsAtEnd = await blogHelper.blogsInDb();
+
+      assert.strictEqual(blogsAtStart.length, blogsAtEnd.length);
+
+      assert(result.body.error.includes('Token missing'));
+    });
 
     // ---------- Test for invalid blog post ----------
     test('Blog with empty body will not be added', async () => {
