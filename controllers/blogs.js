@@ -34,7 +34,7 @@ blogRouter.post('/', userExtractor, async (req, res) => {
 
   const user = req.user;
 
-  if (!user) return res.status(400).json({ error: 'User not found' });
+  if (!user) return res.status(401).json({ error: 'User not found' });
 
   const blog = new Blog({
     title: body.title,
@@ -67,7 +67,7 @@ blogRouter.delete('/:id', userExtractor, async (req, res) => {
   const id = req.params.id;
 
   const user = req.user;
-  if (!user) return res.status(400).json({ error: 'User not found' });
+  if (!user) return res.status(401).json({ error: 'User not found' });
   // console.log({ userID: user._id.toString(), userBlogs: user.blogs });
 
   const blogToDelete = await Blog.findById(id);

@@ -36,7 +36,7 @@ const userExtractor = async (req, res, next) => {
   if (!req.token) return res.status(401).json({ error: 'Token missing' });
 
   const decodedToken = jwt.verify(req.token, process.env.SECRET);
-  if (!decodedToken.id) return res.status(400).json({ error: 'Token invalid' });
+  if (!decodedToken.id) return res.status(401).json({ error: 'Token invalid' });
 
   req.user = await User.findById(decodedToken.id);
 
@@ -60,9 +60,9 @@ const errHandler = (err, req, res, next) => {
     err.name === 'MongoServerError' &&
     err.message.includes('E11000 duplicate key error')
   )
-    return res.status(400).json({ error: 'Username must be unique' });
+    return res.status(401).json({ error: 'Username must be unique' });
   else if (err.name === 'JsonWebTokenError')
-    return res.status(400).json({ error: 'Token invalid' });
+    return res.status(401).json({ error: 'Token invalid' });
 
   next(err);
 };

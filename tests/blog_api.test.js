@@ -7,6 +7,7 @@ import blogHelper from './test_helper.js';
 import Blog from '../models/blog.js';
 import User from '../models/user.js';
 import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 
 // Wrap the Express app in `supertest` function
 const api = supertest(app);
@@ -94,6 +95,16 @@ describe('When there are initially some blogs saved', () => {
     test.only('Post a new blog works', async () => {
       const users = await blogHelper.userInDb();
       const userToTest = users[0];
+      console.log(userToTest);
+
+      const dataForToken = {
+        username: userToTest.username,
+        id: userToTest.id,
+      };
+      console.log(dataForToken);
+
+      const token = jwt.sign(dataForToken, process.env.SECRET);
+      console.log(token);
 
       const newBlog = {
         title: 'Rise of the Apex Predator',
@@ -105,6 +116,7 @@ describe('When there are initially some blogs saved', () => {
 
       await api
         .post('/api/blogs')
+        .set('Authorization', `Bearer ${token}`)
         .send(newBlog)
         .expect(201)
         .expect('Content-Type', /application\/json/);
@@ -120,6 +132,8 @@ describe('When there are initially some blogs saved', () => {
 
       assert.strictEqual(titles.includes(newBlog.title), true);
     });
+
+    // ---------- Test for when token is not provided ----------
 
     // ---------- Test for invalid blog post ----------
     test('Blog with empty body will not be added', async () => {
