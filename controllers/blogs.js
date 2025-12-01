@@ -9,6 +9,7 @@ const blogRouter = express.Router();
 import Blog from '../models/blog.js';
 import User from '../models/user.js';
 import jwt from 'jsonwebtoken';
+import { userExtractor } from '../utils/middleware.js';
 
 // ---------- Time log middleware that is specific to this router ----------
 const timeLog = (req, res, next) => {
@@ -30,7 +31,7 @@ blogRouter.get('/', async (req, res) => {
 });
 
 // ---------- Add new blog ----------
-blogRouter.post('/', async (req, res) => {
+blogRouter.post('/', userExtractor, async (req, res) => {
   const body = req.body;
 
   const decodedToken = jwt.verify(req.token, process.env.SECRET);
@@ -71,7 +72,7 @@ blogRouter.get('/:id', async (req, res) => {
 });
 
 // ---------- Delete a single blog ----------
-blogRouter.delete('/:id', async (req, res) => {
+blogRouter.delete('/:id', userExtractor, async (req, res) => {
   const id = req.params.id;
 
   // console.log({ tokenDel: req.token });
@@ -116,7 +117,3 @@ blogRouter.put('/:id', async (req, res) => {
 });
 
 export default blogRouter;
-
-// Set up so that blog delete is only possible with the user who added it
-// Need to send a token, decode to the token and check if the decodedToken.id is the
-// same as `user` in blog. If so, then delete.

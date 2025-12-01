@@ -1,4 +1,6 @@
 import logger from './logger.js';
+import jwt from 'jsonwebtoken';
+import User from '../models/user.js';
 
 // ---------- Request logger ----------
 const reqLogger = (req, res, next) => {
@@ -12,7 +14,9 @@ const reqLogger = (req, res, next) => {
 
 // ---------- Token extractor ----------
 const tokenExtractor = (req, res, next) => {
-  logger.info('PLEASE WORK!');
+  // logger.info('PLEASE WORK!');
+  // logger.info(req.method);
+  if (req.method === 'GET') return next();
 
   // Note to self: Express only call middleware with a `req` object, it won't run
   // without one. Early version had `if (!req) return null` but it is unnecessary
@@ -22,6 +26,19 @@ const tokenExtractor = (req, res, next) => {
   if (authorization && authorization.startsWith('Bearer ')) {
     req.token = authorization.slice(7); // Slice and return a new str at where 'Bearer ' end
   }
+
+  next();
+};
+
+// ---------- User extractor ----------
+const userExtractor = async (req, res, next) => {
+  if (req.method === 'GET') return next();
+  if (!req.token) return res.status(401).json({ error: 'Token missing' });
+
+  const decodedToken = jwt.verify(req.token, process.env.SECRET);
+  if (!decodedToken.id) return res.status(400).json({ error: 'Token invalid' });
+
+  req.user = await User.findById(decodedToken.id);
 
   next();
 };
@@ -50,4 +67,10 @@ const errHandler = (err, req, res, next) => {
   next(err);
 };
 
-export { reqLogger, tokenExtractor, unknownEndpoint, errHandler };
+export {
+  reqLogger,
+  tokenExtractor,
+  userExtractor,
+  unknownEndpoint,
+  errHandler,
+};

@@ -8,6 +8,7 @@ import mongoose from 'mongoose';
 import {
   errHandler,
   tokenExtractor,
+  userExtractor,
   unknownEndpoint,
   reqLogger,
 } from './utils/middleware.js';
@@ -48,7 +49,7 @@ app.use(tokenExtractor);
 app.get('/', (req, res) => res.send('<h1>WELCOME!</h1>'));
 
 // ---------- Pass request to '/api/blogs' to router 'mini-app' ----------
-app.use('/api/blogs', blogRouter);
+app.use('/api/blogs', userExtractor, blogRouter);
 
 // ---------- Pass request to '/api/login' to login router ----------
 app.use('/api/login', loginRouter);
